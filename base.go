@@ -14,6 +14,8 @@ import (
 // ad-hoc builds (e.g. `go build`) that cannot get the version
 // information from git.
 var (
+	// if no version is set, get it from git tag,
+	// output of git describe --tags --abbrev=0 --exact-match
 	version = "v0.0.0"
 
 	// sha1 from git, output of $(git rev-parse HEAD)
@@ -51,7 +53,12 @@ func setGitInfo(tagToVersion bool) {
 	if out, err := stateCmd.Output(); err == nil {
 		gitTreeState = string(bytes.TrimSpace(out))
 	}
-	fmt.Println(git)
+	if tagToVersion {
+		tagCmd := exec.Command(git, "describe", "--tags", "--abbrev=0", "--exact-match")
+		if out, err := tagCmd.Output(); err == nil {
+			version = string(bytes.TrimSpace(out))
+		}
+	}
 }
 
 func setBuildDate() {
