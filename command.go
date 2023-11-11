@@ -15,7 +15,11 @@ const (
   %s version --number`
 )
 
+<<<<<<< HEAD
 type Options struct {
+=======
+type CmdOptions struct {
+>>>>>>> d18076a (test: git tree state)
 	ParentName    string
 	PrintHandler  PrintHandler
 	NoRuntimeInfo bool
@@ -23,16 +27,25 @@ type Options struct {
 
 // NewVersionCommand prints out the release version info for this command binary.
 // It is used as a subcommand of a parent command.
+<<<<<<< HEAD
 func NewVersionCommand(opts *Options) *cobra.Command {
 	printOpts := new(PrintOptions)
 	if opts == nil {
 		opts = new(Options)
+=======
+func NewVersionCommand(opts ...*CmdOptions) *cobra.Command {
+	printOpts := new(PrintOptions)
+	cmdOpts := new(CmdOptions)
+	if len(opts) > 0 && opts[0] != nil {
+		cmdOpts = opts[0]
+>>>>>>> d18076a (test: git tree state)
 	}
 	cmd := &cobra.Command{
 		Use:   "version",
 		Short: versionShort,
 		Long:  versionLong,
 		Example: fmt.Sprintf(versionExample,
+<<<<<<< HEAD
 			opts.ParentName,
 			opts.ParentName,
 			opts.ParentName,
@@ -51,6 +64,26 @@ func NewVersionCommand(opts *Options) *cobra.Command {
 	}
 
 	printOpts.addFlags(cmd.Flags())
+=======
+			cmdOpts.ParentName,
+			cmdOpts.ParentName,
+			cmdOpts.ParentName,
+		),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			versionInfo := NewVersionInfo().SetName(cmdOpts.ParentName)
+			if cmdOpts.NoRuntimeInfo {
+				versionInfo.UnsetRuntime()
+			}
+			if cmdOpts.PrintHandler != nil {
+				return cmdOpts.PrintHandler(versionInfo, printOpts)
+			}
+			return NamedJsonPrint(versionInfo, printOpts)
+		},
+	}
+
+	cmd.Flags().BoolVarP(&printOpts.OnlyNumber, "number", "n", false,
+		"Print the version number only")
+>>>>>>> d18076a (test: git tree state)
 
 	return cmd
 }
