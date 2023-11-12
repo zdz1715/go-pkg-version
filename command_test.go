@@ -24,7 +24,7 @@ func TestNewVersionCommandWithCmdOptions(t *testing.T) {
 		// 自定义打印方式
 		PrintHandler: func(versionInfo *VersionInfo, opts *PrintOptions) error {
 			info := fmt.Sprintf("%s: %s", versionInfo.Name, versionInfo.Version)
-			if opts.OnlyNumber {
+			if opts != nil && opts.OnlyNumber {
 				_, err := fmt.Println(info)
 				return err
 			}

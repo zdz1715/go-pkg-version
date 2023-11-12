@@ -18,6 +18,7 @@ func jsonPrint(versionInfo *VersionInfo, opts *PrintOptions, named bool) error {
 	if versionInfo == nil {
 		return fmt.Errorf("version: nil version information")
 	}
+
 	if opts != nil && opts.OnlyNumber {
 		_, err := fmt.Println(versionInfo.Version)
 		return err

@@ -6,13 +6,13 @@ import (
 )
 
 func TestPrint(t *testing.T) {
-	versionInfo := NewVersionInfo("kubectl")
+	versionInfo := NewVersionInfo("myapp")
 
 	fmt.Println("> NamedJsonPrint: named json format(default)")
-	_ = NamedJsonPrint(versionInfo, nil)
+	NamedJsonPrint(versionInfo, nil)
 	fmt.Println("> JsonPrint: json format")
-	_ = JsonPrint(versionInfo, nil)
+	JsonPrint(versionInfo, nil)
 
 	fmt.Println("> PlainTextPrint: plain text format")
-	_ = PlainTextPrint(versionInfo, nil)
+	PlainTextPrint(versionInfo, nil)
 }
