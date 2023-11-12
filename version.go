@@ -22,7 +22,7 @@ type VersionInfo struct {
 
 // NewVersionInfo returns the overall codebase version. It's for detecting
 // what code a binary was built from.
-func NewVersionInfo() *VersionInfo {
+func NewVersionInfo(name ...string) *VersionInfo {
 	vi := &VersionInfo{
 		Version:      version,
 		GitCommit:    gitCommit,
@@ -38,6 +38,9 @@ func NewVersionInfo() *VersionInfo {
 		vi.Major = ver.Major()
 		vi.Minor = ver.Minor()
 	}
+	if len(name) > 0 && name[0] != "" {
+		vi.Name = name[0]
+	}
 	return vi
 }
 
@@ -45,11 +48,6 @@ func (vi *VersionInfo) UnsetRuntime() *VersionInfo {
 	vi.GoVersion = ""
 	vi.Compiler = ""
 	vi.Platform = ""
-	return vi
-}
-
-func (vi *VersionInfo) SetName(name string) *VersionInfo {
-	vi.Name = name
 	return vi
 }
 
@@ -111,6 +109,7 @@ func (v *Version) Major() string {
 func (v *Version) Minor() string {
 	return v.minor
 }
+
 func (v *Version) Latest() bool {
 	return v.latest
 }
@@ -174,6 +173,7 @@ func ParseVersion(v string) *Version {
 		ver.major = v[majorStart:]
 		return ver
 	}
+
 	if minorEnd < minorStart {
 		ver.major = v[majorStart:majorEnd]
 		ver.minor = v[minorStart:]

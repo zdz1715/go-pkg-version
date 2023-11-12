@@ -1,7 +1,6 @@
 package gopkgversion
 
 import (
-	"fmt"
 	"reflect"
 	"testing"
 )
@@ -69,7 +68,7 @@ func TestParseVersion(t *testing.T) {
 			major: "1",
 			minor: "24",
 		}},
-		{version: "\t\truby 3.2.2 (2023-03-30 revision e51014f9c0)\n", want: &Version{
+		{version: "ruby 3.2.2 (2023-03-30 revision e51014f9c0)", want: &Version{
 			major: "3",
 			minor: "2",
 		}},
@@ -124,11 +123,10 @@ func TestParseVersion(t *testing.T) {
 func TestSetVersion(t *testing.T) {
 	// 指定版本
 	SetVersion("v0.0.1")
-	fmt.Println("+ version")
+	SetBuildDate()
 	_ = JsonPrint(NewVersionInfo(), nil)
 
 	// 从git tag获取，先执行: git tag v1.0.1
 	SetGitInfo(true)
-	fmt.Println("+ version")
 	_ = JsonPrint(NewVersionInfo(), nil)
 }

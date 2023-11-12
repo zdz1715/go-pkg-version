@@ -6,8 +6,7 @@ import (
 )
 
 func TestPrint(t *testing.T) {
-	SetVersion("v1.0.2")
-	versionInfo := NewVersionInfo().SetName("kubectl")
+	versionInfo := NewVersionInfo("kubectl")
 
 	fmt.Println("> NamedJsonPrint: named json format(default)")
 	_ = NamedJsonPrint(versionInfo, nil)
