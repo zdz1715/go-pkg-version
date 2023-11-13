@@ -7,7 +7,7 @@ import (
 )
 
 func TestNewVersionCommand(t *testing.T) {
-	cmd := NewVersionCommand(nil)
+	cmd, _ := NewVersionCommand(nil)
 	fmt.Println("+ version help")
 	_ = cmd.Help()
 	fmt.Println("+ version")
@@ -18,9 +18,9 @@ func TestNewVersionCommand(t *testing.T) {
 }
 
 func TestNewVersionCommandWithCmdOptions(t *testing.T) {
-	cmd := NewVersionCommand(&CmdOptions{
-		Name: "kubectl",
-		//NoRuntimeInfo: true,
+	cmd, info := NewVersionCommand(&CmdOptions{
+		Name:          "kubectl",
+		NoRuntimeInfo: true,
 		// 自定义打印方式
 		PrintHandler: func(versionInfo *VersionInfo, opts *PrintOptions) error {
 			info := fmt.Sprintf("%s: %s", versionInfo.Name, versionInfo.Version)
@@ -35,6 +35,7 @@ func TestNewVersionCommandWithCmdOptions(t *testing.T) {
 			return err
 		},
 	})
+	t.Logf("version: %#v\n", info)
 	fmt.Println("+ kubectl version help")
 	_ = cmd.Help()
 	fmt.Println("+ kubectl version")

@@ -9,7 +9,7 @@ go get -u github.com/zdz1715/go-pkg-version@latest
 
 ## 使用方式
 - [example/not-use-command](./example/not-use-command/main.go)
-- [example/tag-to-version](./example/tag-to-version/main.go)
+- [example/use-command](./example/use-command/main.go)
 ### 直接设置版本
 只需要版本信息，忽略`git`和`buildDate`信息，则可以直接在代码里调用`SetVersion()`方法设置
 ```go

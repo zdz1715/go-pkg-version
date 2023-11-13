@@ -24,12 +24,13 @@ type CmdOptions struct {
 // NewVersionCommand prints out the release version info for this command binary.
 // It is used as a subcommand of a parent command.
 
-func NewVersionCommand(opts ...*CmdOptions) *cobra.Command {
+func NewVersionCommand(opts ...*CmdOptions) (*cobra.Command, *VersionInfo) {
 	printOpts := new(PrintOptions)
 	cmdOpts := new(CmdOptions)
 	if len(opts) > 0 && opts[0] != nil {
 		cmdOpts = opts[0]
 	}
+	versionInfo := NewVersionInfo(cmdOpts.Name)
 	cmd := &cobra.Command{
 		Use:   "version",
 		Short: versionShort,
@@ -40,19 +41,19 @@ func NewVersionCommand(opts ...*CmdOptions) *cobra.Command {
 			cmdOpts.Name,
 		),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			versionInfo := NewVersionInfo(cmdOpts.Name)
+			vi := versionInfo.Copy()
 			if cmdOpts.NoRuntimeInfo {
-				versionInfo.UnsetRuntime()
+				vi.UnsetRuntime()
 			}
 			if cmdOpts.PrintHandler != nil {
-				return cmdOpts.PrintHandler(versionInfo, printOpts)
+				return cmdOpts.PrintHandler(vi, printOpts)
 			}
-			return NamedJsonPrint(versionInfo, printOpts)
+			return NamedJsonPrint(vi, printOpts)
 		},
 	}
 
 	cmd.Flags().BoolVarP(&printOpts.OnlyNumber, "number", "n", false,
 		"Print the version number only")
 
-	return cmd
+	return cmd, versionInfo
 }
