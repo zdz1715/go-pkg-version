@@ -7,7 +7,7 @@ import (
 
 func BenchmarkParseVersion(b *testing.B) {
 	for i := 0; i < b.N; i++ {
-		ParseVersion("v1.20.3-2009-03-21")
+		NewVersion("v1.20.3-2009-03-21")
 	}
 }
 
@@ -35,8 +35,8 @@ func TestVersion_Older(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		ver := ParseVersion(tt.version)
-		targetVer := ParseVersion(tt.targetVersion)
+		ver := NewVersion(tt.version)
+		targetVer := NewVersion(tt.targetVersion)
 		flag := ver.Older(targetVer)
 		if flag != tt.want {
 			t.Errorf("%s < %s = %t, want=%t", tt.version, tt.targetVersion, flag, tt.want)
@@ -119,7 +119,7 @@ func TestParseVersion(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		ver := ParseVersion(tt.version)
+		ver := NewVersion(tt.version)
 
 		if !reflect.DeepEqual(ver, tt.want) {
 			t.Errorf("version=%s target=%s want=%s", tt.version, ver, tt.want)

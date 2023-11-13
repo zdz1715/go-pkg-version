@@ -34,7 +34,7 @@ func NewVersionInfo(name ...string) *VersionInfo {
 		Platform:  fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH),
 	}
 	if vi.Version != "" {
-		ver := ParseVersion(vi.Version)
+		ver := NewVersion(vi.Version)
 		vi.Major = ver.Major()
 		vi.Minor = ver.Minor()
 	}
@@ -128,7 +128,28 @@ func (v *Version) Latest() bool {
 	return v.latest
 }
 
-func ParseVersion(v string) *Version {
+func (v *Version) add(num string) {
+	if v.major == "" {
+		v.major = num
+		return
+	}
+	if v.minor == "" {
+		v.minor = num
+		return
+	}
+	if v.patch == "" {
+		v.patch = num
+	}
+}
+
+func (v *Version) complete() bool {
+	if v.major != "" && v.minor != "" && v.patch != "" {
+		return true
+	}
+	return false
+}
+
+func NewVersion(v string) *Version {
 	ver := new(Version)
 	if v == "" {
 		return ver
@@ -140,20 +161,17 @@ func ParseVersion(v string) *Version {
 	index := -1
 	endIndex := len(v) - 1
 	skip := false
-	maxLen := 3
-	list := make([]string, 0, maxLen)
 	for i, r := range v {
-		if len(list) >= maxLen {
+		if ver.complete() {
 			break
 		}
-
 		newNum := false
 		if unicode.IsDigit(r) {
 			if index < 0 && !skip {
 				index = i
 			}
 			if i == endIndex && index >= 0 {
-				list = append(list, v[index:])
+				ver.add(v[index:])
 				break
 			}
 		} else {
@@ -164,7 +182,7 @@ func ParseVersion(v string) *Version {
 		}
 
 		if newNum && index >= 0 {
-			list = append(list, v[index:i])
+			ver.add(v[index:i])
 			index = -1
 			if r != '.' {
 				skip = true
@@ -172,17 +190,6 @@ func ParseVersion(v string) *Version {
 		}
 
 	}
-	if len(list) == 0 {
-		return ver
-	}
-	if len(list) > 0 {
-		ver.major = list[0]
-	}
-	if len(list) > 1 {
-		ver.minor = list[1]
-	}
-	if len(list) > 2 {
-		ver.patch = list[2]
-	}
+
 	return ver
 }
