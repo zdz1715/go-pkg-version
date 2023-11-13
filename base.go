@@ -1,9 +1,16 @@
 package gopkgversion
 
+/*
+const char* build_time()
+{
+    static const char* psz_build_time = __DATE__ " " __TIME__ ;
+    return psz_build_time;
+}
+*/
+import "C"
 import (
 	"bytes"
 	"os/exec"
-	"time"
 )
 
 // Base version information.
@@ -25,7 +32,7 @@ var (
 	gitTreeState = "" // state of git tree, either "clean" or "dirty"
 
 	// build date in ISO8601 format, output of $(date -u +'%Y-%m-%dT%H:%M:%SZ')
-	buildDate = ""
+	buildDate = C.GoString(C.build_time())
 )
 
 func SetVersion(ver string) {
@@ -63,12 +70,4 @@ func SetGitInfo(tagToVersion bool, dir ...string) {
 			version = string(bytes.TrimSpace(out))
 		}
 	}
-}
-
-func SetBuildDate(ts ...string) {
-	if len(ts) > 0 && ts[0] != "" {
-		buildDate = ts[0]
-		return
-	}
-	buildDate = time.Now().In(time.UTC).Format(time.RFC3339)
 }
