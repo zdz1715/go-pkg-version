@@ -9,17 +9,47 @@ go get -u github.com/zdz1715/go-pkg-version@latest
 
 ## 使用方式
 - [example/not-use-command](./example/not-use-command/main.go)
-- [example/use-command](./example/use-command/main.go)
 - [example/tag-to-version](./example/tag-to-version/main.go)
+### 直接设置版本
+只需要版本信息，忽略`git`和`buildDate`信息，则可以直接在代码里调用`SetVersion()`方法设置
+```go
+package main
+import (
+	gopkgversion "github.com/zdz1715/go-pkg-version"
+)
+func main() {
+	gopkgversion.SetVersion("v1.10.1")
+}
+```
+### 打包注入版本
+需要`git`和`buildDate`信息，可以在`Makefile`里注入版本信息，下面使用git tag为版本号
+```Makefile
+# Git information
+GIT_COMMIT = $(shell git rev-parse HEAD)
+#GIT_COMMIT_HASH    = $(shell git rev-parse --short HEAD)
+GIT_COMMIT_HASH    = $(shell git rev-parse HEAD)
+GIT_TAG    = $(shell git describe --tags --abbrev=0 --exact-match 2>/dev/null)
+GIT_TREESTATE  = $(shell test -n "`git status --porcelain`" && echo "dirty" || echo "clean")
+BUILDDATE = $(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
+
+LDFLAGS += -X github.com/zdz1715/go-pkg-version.version=$(GIT_TAG)
+LDFLAGS += -X github.com/zdz1715/go-pkg-version.gitCommit=$(GIT_COMMIT_HASH)
+LDFLAGS += -X github.com/zdz1715/go-pkg-version.gitTreeState=$(GIT_TREESTATE)
+LDFLAGS += -X github.com/zdz1715/go-pkg-version.buildDate=$(BUILDDATE)
+
+.PHONY: build
+build: ## Build binary.
+	go build -ldflags "$(LDFLAGS)" -o not-use-command-version example/not-use-command/main.go
+```
  
 ## 版本信息字段
 
 | 字段                 | 说明                           | 
 |:-------------------|:-----------------------------|
-| name               | 应用名称，需要手动设置                  |
-| major              | 主要版本号，根据版本号自动获取              |
-| minor              | 次要版本号，根据版本号自动获取              |
-| version            | 版本号，可自动获取git tag为版本号或者手动设置   |
+| name               | 应用名称                         |
+| major              | 主要版本号                        |
+| minor              | 次要版本号                        |
+| version            | 版本号                          |
 | gitCommit          | Git 提交hash                   |
 | gitTreeState       | Git 提交状态: 'clean' or 'dirty' |
 | buildDate          | 构建时间                         |

@@ -12,10 +12,6 @@ var rootCmd = cobra.Command{
 }
 
 func main() {
-	gopkgversion.SetVersion("v1.10.1")
-	gopkgversion.SetGitInfo(false)
-	gopkgversion.SetBuildDate()
-
 	rootCmd.AddCommand(gopkgversion.NewVersionCommand(&gopkgversion.CmdOptions{
 		Name: "myapp",
 	}))
