@@ -27,7 +27,6 @@ func TestVersion_Older(t *testing.T) {
 			targetVersion: "v0.1.1",
 			want:          false,
 		},
-		// 只比较major.minor
 		{
 			version:       "1.4.1",
 			targetVersion: "1.4.2",
@@ -52,58 +51,66 @@ func TestParseVersion(t *testing.T) {
 		want    *Version
 	}{
 		// [任意字符]主版本号.次版本号.修正版本号[任意字符]
-		{version: "1.24.3", want: &Version{
+		{version: "1.24.3-20200604", want: &Version{
 			major: "1",
 			minor: "24",
+			patch: "3",
 		}},
 		{version: "v1.24.3", want: &Version{
 			major: "1",
 			minor: "24",
+			patch: "3",
 		}},
 		{version: "version: 1.24.3", want: &Version{
 			major: "1",
 			minor: "24",
+			patch: "3",
 		}},
 		{version: "版本: 1.24.3", want: &Version{
 			major: "1",
 			minor: "24",
+			patch: "3",
 		}},
 		{version: "ruby 3.2.2 (2023-03-30 revision e51014f9c0)", want: &Version{
 			major: "3",
 			minor: "2",
+			patch: "2",
 		}},
 		{version: "go version go1.21.4 darwin/arm6", want: &Version{
 			major: "1",
 			minor: "21",
+			patch: "4",
 		}},
 		// 下面是随意输入的版本号，只查找以'.'分割的每个字符串最先匹配到的数字
 		// [任意字符]主版本号[任意字符].次版本号[任意字符][.修正版本号]
-		{version: "version.52-kfc-4.v50-rc", want: &Version{
+		{version: "v52-kfc-4.v50-rc", want: &Version{
 			major: "52",
 			minor: "50",
 		}},
-		{version: "v10-2.43-50.3.20220513_rc", want: &Version{
+		{version: "v10-2.43-50.30-20220513_rc", want: &Version{
 			major: "10",
 			minor: "43",
+			patch: "30",
 		}},
 		{version: "v1.2-20220513_rc", want: &Version{
 			major: "1",
 			minor: "2",
 		}},
 		// [任意字符]主版本号[任意字符]
-		{version: "v100.", want: &Version{
-			major: "100",
-			minor: "",
+		{version: "v10.", want: &Version{
+			major: "10",
 		}},
 		{version: "v10.v", want: &Version{
 			major: "10",
-			minor: "",
 		}},
 
 		// [任意字符]主版本号[任意字符].次版本号
 		{version: "version.100.version.num.23", want: &Version{
 			major: "100",
 			minor: "23",
+		}},
+		{version: "1", want: &Version{
+			major: "1",
 		}},
 		// 字符无数字
 		{version: "latest", want: &Version{
@@ -115,7 +122,7 @@ func TestParseVersion(t *testing.T) {
 		ver := ParseVersion(tt.version)
 
 		if !reflect.DeepEqual(ver, tt.want) {
-			t.Errorf("version=%s target=%v want=%v", tt.version, ver, tt.want)
+			t.Errorf("version=%s target=%s want=%s", tt.version, ver, tt.want)
 		}
 	}
 }

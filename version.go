@@ -69,6 +69,7 @@ func (vi *VersionInfo) Copy() *VersionInfo {
 type Version struct {
 	major  string
 	minor  string
+	patch  string
 	latest bool
 }
 
@@ -80,11 +81,16 @@ func (v *Version) String() string {
 	if v.major == "" {
 		return ""
 	}
-	verStr := "v" + v.major
-	if v.minor != "" {
-		verStr += "." + v.minor
+
+	if v.minor == "" {
+		return v.major
 	}
-	return verStr
+
+	if v.patch == "" {
+		return v.major + "." + v.minor
+	}
+
+	return v.major + "." + v.minor + "." + v.patch
 }
 
 // Older returns true if this version v is older than the other.
@@ -99,7 +105,11 @@ func (v *Version) Older(other *Version) bool {
 		return v.major < other.major
 	}
 
-	return v.minor < other.minor
+	if v.minor != other.minor {
+		return v.minor < other.minor
+	}
+
+	return v.patch < other.patch
 }
 
 func (v *Version) Major() string {
@@ -108,6 +118,10 @@ func (v *Version) Major() string {
 
 func (v *Version) Minor() string {
 	return v.minor
+}
+
+func (v *Version) Patch() string {
+	return v.patch
 }
 
 func (v *Version) Latest() bool {
@@ -123,64 +137,52 @@ func ParseVersion(v string) *Version {
 		ver.latest = true
 		return ver
 	}
-	majorStart := -1
-	majorEnd := 0
-	minorStart := 0
-	minorEnd := 0
-	majorFinish := false
+	index := -1
+	endIndex := len(v) - 1
+	skip := false
+	maxLen := 3
+	list := make([]string, 0, maxLen)
 	for i, r := range v {
-		if majorStart >= 0 && majorEnd > 0 && minorStart > 0 && minorEnd > 0 {
+		if len(list) >= maxLen {
 			break
 		}
+
+		newNum := false
 		if unicode.IsDigit(r) {
-			if majorStart < 0 {
-				majorStart = i
+			if index < 0 && !skip {
+				index = i
 			}
-
-			if majorFinish && minorStart == 0 {
-				minorStart = i
+			if i == endIndex && index >= 0 {
+				list = append(list, v[index:])
+				break
 			}
-
 		} else {
-			if majorStart >= 0 && majorEnd == 0 {
-				majorEnd = i
-			}
-
-			if minorStart > 0 && minorEnd == 0 {
-				minorEnd = i
-			}
-
+			newNum = true
 			if r == '.' {
-				// 重置
-				if majorEnd == 0 {
-					majorStart = -1
-				}
-
-				if minorEnd == 0 {
-					minorStart = 0
-				}
-				if majorEnd > 0 {
-					majorFinish = true
-				}
+				skip = false
 			}
 		}
+
+		if newNum && index >= 0 {
+			list = append(list, v[index:i])
+			index = -1
+			if r != '.' {
+				skip = true
+			}
+		}
+
 	}
-	if majorStart < 0 {
+	if len(list) == 0 {
 		return ver
 	}
-
-	if majorEnd < majorStart {
-		ver.major = v[majorStart:]
-		return ver
+	if len(list) > 0 {
+		ver.major = list[0]
 	}
-
-	if minorEnd < minorStart {
-		ver.major = v[majorStart:majorEnd]
-		ver.minor = v[minorStart:]
-		return ver
+	if len(list) > 1 {
+		ver.minor = list[1]
 	}
-
-	ver.major = v[majorStart:majorEnd]
-	ver.minor = v[minorStart:minorEnd]
+	if len(list) > 2 {
+		ver.patch = list[2]
+	}
 	return ver
 }
