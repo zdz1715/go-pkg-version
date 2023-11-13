@@ -123,10 +123,6 @@ func TestParseVersion(t *testing.T) {
 func TestSetVersion(t *testing.T) {
 	// 指定版本
 	SetVersion("v0.0.1")
-	SetBuildDate()
-	_ = JsonPrint(NewVersionInfo(), nil)
 
-	// 从git tag获取，先执行: git tag v1.0.1
-	SetGitInfo(true)
 	_ = JsonPrint(NewVersionInfo(), nil)
 }
