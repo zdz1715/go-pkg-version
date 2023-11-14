@@ -93,6 +93,14 @@ func (v *Version) String() string {
 	return v.major + "." + v.minor + "." + v.patch
 }
 
+func (v *Version) Version() string {
+	str := v.String()
+	if str == "latest" {
+		return str
+	}
+	return "v" + str
+}
+
 // Older returns true if this version v is older than the other.
 func (v *Version) Older(other *Version) bool {
 	if v.latest || other == nil { // Latest is always consider newer, even than future versions.
