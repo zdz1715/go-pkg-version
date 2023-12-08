@@ -12,6 +12,8 @@ github.com/zdz1715/go-utils v0.0.0-20231121110129-4eea02ca8091 h1:0FvRKgYf6WhCbP
 github.com/zdz1715/go-utils v0.0.0-20231121110129-4eea02ca8091/go.mod h1:xFw7HuylRZ86KvoMDYAm2iV5F+lxftgybeTGnKONLlQ=
 github.com/zdz1715/go-utils v0.0.0-20231122084334-573f5a1367ab h1:2tmLbLdt2cX2+tQhBWyPlLEoI6Fa6E5jEm/gYtqj1ps=
 github.com/zdz1715/go-utils v0.0.0-20231122084334-573f5a1367ab/go.mod h1:LHrqjB/WeVPj6ECQoz/Zg0mrmE7if2fsJ3WGmRLMMkw=
+github.com/zdz1715/go-utils v0.0.0-20231208070115-ae3f6e322e19 h1:rQO+MWag5/+fC+uFWQk0oMqyTXajH2Hi9PLkzU0Urt4=
+github.com/zdz1715/go-utils v0.0.0-20231208070115-ae3f6e322e19/go.mod h1:LHrqjB/WeVPj6ECQoz/Zg0mrmE7if2fsJ3WGmRLMMkw=
 golang.org/x/sys v0.14.0/go.mod h1:/VUhepiaJMQUp4+oa/7Zr1D23ma6VTLIYjOOTFZPUcA=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
 gopkg.in/yaml.v3 v3.0.1/go.mod h1:K4uyk7z7BCEPqu6E+C64Yfv1cQ7kz7rIZviUmN+EgEM=
