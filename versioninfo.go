@@ -1,25 +1,29 @@
 package gopkgversion
 
 import (
+	"encoding/json"
 	"fmt"
+	"reflect"
 	"runtime"
 	"strconv"
-
-	versionPkg "github.com/zdz1715/go-utils/version"
+	"strings"
 )
 
 // VersionInfo contains versioning information.
 type VersionInfo struct {
-	Name         string `json:"name,omitempty"`
+	name string `json:"-"`
+
 	Major        string `json:"major,omitempty"`
 	Minor        string `json:"minor,omitempty"`
+	Patch        string `json:"patch,omitempty"`
 	Version      string `json:"version,omitempty"`
 	GitCommit    string `json:"gitCommit,omitempty"`
 	GitTreeState string `json:"gitTreeState,omitempty"`
 	BuildDate    string `json:"buildDate,omitempty"`
-	GoVersion    string `json:"goVersion,omitempty"`
-	Compiler     string `json:"compiler,omitempty"`
-	Platform     string `json:"platform,omitempty"`
+
+	GoVersion string `json:"goVersion,omitempty"`
+	Compiler  string `json:"compiler,omitempty"`
+	Platform  string `json:"platform,omitempty"`
 }
 
 // NewVersionInfo returns the overall codebase version. It's for detecting
@@ -35,15 +39,56 @@ func NewVersionInfo(name ...string) *VersionInfo {
 		Compiler:  runtime.Compiler,
 		Platform:  fmt.Sprintf("%s/%s", runtime.GOOS, runtime.GOARCH),
 	}
+
 	if vi.Version != "" {
-		ver := versionPkg.ParseVersion(vi.Version)
+		ver := ParseVersion(vi.Version)
 		vi.Major = strconv.Itoa(ver.Major())
 		vi.Minor = strconv.Itoa(ver.Minor())
+		vi.Patch = strconv.Itoa(ver.Patch())
 	}
-	if len(name) > 0 && name[0] != "" {
-		vi.Name = name[0]
+
+	if len(name) > 0 {
+		vi.name = name[0]
 	}
+
 	return vi
+}
+
+func (vi *VersionInfo) String() string {
+	var builder strings.Builder
+	if vi.name != "" {
+		builder.WriteString(vi.name + ": ")
+	}
+	vBytes, err := json.Marshal(vi)
+	if err == nil {
+		builder.Write(vBytes)
+	}
+	return builder.String()
+}
+
+func (vi *VersionInfo) GetName() string {
+	return vi.name
+}
+
+func (vi *VersionInfo) KVString() string {
+	var builder strings.Builder
+	vType := reflect.TypeOf(vi).Elem()
+	v := reflect.ValueOf(vi).Elem()
+	length := vType.NumField()
+	for i := 0; i < length; i++ {
+		fieldName := vType.Field(i).Name
+		value := v.Field(i).String()
+		if value != "" {
+			builder.WriteString(strings.ToLower(fieldName[:1]) + fieldName[1:])
+			builder.WriteString("=")
+			builder.WriteString(value)
+			if i < length-1 {
+				builder.WriteString(" ")
+			}
+		}
+
+	}
+	return builder.String()
 }
 
 func (vi *VersionInfo) UnsetRuntime() *VersionInfo {
@@ -53,9 +98,13 @@ func (vi *VersionInfo) UnsetRuntime() *VersionInfo {
 	return vi
 }
 
-func (vi *VersionInfo) Copy() *VersionInfo {
+func (vi *VersionInfo) Copy(names ...string) *VersionInfo {
+	name := vi.name
+	if len(names) > 0 {
+		name = names[0]
+	}
 	return &VersionInfo{
-		Name:         vi.Name,
+		name:         name,
 		Major:        vi.Major,
 		Minor:        vi.Minor,
 		Version:      vi.Version,
