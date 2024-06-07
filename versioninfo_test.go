@@ -5,7 +5,8 @@ import (
 )
 
 func TestPrint(t *testing.T) {
-	versionInfo := NewVersionInfo("myapp")
+	SetVersion("v1.22.3")
+	versionInfo := NewVersionInfo("golang")
 
 	t.Logf("%s\n", versionInfo)
 	t.Logf("%s\n", versionInfo.KVString())
