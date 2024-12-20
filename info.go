@@ -9,6 +9,7 @@ import (
 
 // Info contains versioning information.
 type Info struct {
+	Name         string `json:"name,omitempty"`
 	Major        string `json:"major,omitempty"`
 	Minor        string `json:"minor,omitempty"`
 	Patch        string `json:"patch,omitempty"`
@@ -21,9 +22,14 @@ type Info struct {
 	Platform     string `json:"platform,omitempty"`
 }
 
-func Get() Info {
+func Get(name ...string) Info {
+	var n string
+	if len(name) > 0 && name[0] != "" {
+		n = name[0]
+	}
 	ver := ParseVersion(version)
 	return Info{
+		Name:         n,
 		Major:        strconv.Itoa(ver.Major()),
 		Minor:        strconv.Itoa(ver.Minor()),
 		Patch:        strconv.Itoa(ver.Patch()),
