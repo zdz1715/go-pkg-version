@@ -15,11 +15,10 @@ package main
 import (
 	"fmt"
 	gopkgversion "github.com/zdz1715/go-pkg-version"
-	"time"
 )
 
 func main() {
-	gopkgversion.SetVersion("v1.22.3", time.Now())
+	gopkgversion.SetVersion("v1.22.3")
 	fmt.Println(gopkgversion.Get().Json())
 }
 ```
@@ -27,7 +26,7 @@ Output:
 ```shell
 {"major":"1","minor":"23","patch":"2","version":"v1.23.2","buildDate":"2024-09-11T18:50:42+08:00","goVersion":"go1.23.2","compiler":"gc","platform":"darwin/arm64"}
 ```
-### 打包注入版本
+### 打包时注入版本
 需要`git`和`buildDate`信息，可以在`Makefile`里注入版本信息，下面使用git tag为版本号
 ```Makefile
 # Git information
@@ -47,18 +46,19 @@ LDFLAGS += -X github.com/zdz1715/go-pkg-version.buildDate=$(BUILDDATE)
 build: ## Build binary.
 	go build -ldflags "$(LDFLAGS)" -o app app/main.go
 ```
- 
+
 ## 版本信息字段
 
 | 字段           | 说明                           | 
 |:-------------|:-----------------------------|
-| major        | 主要版本号                        |
-| minor        | 次要版本号                        |
-| patch        | 修订号                          |
-| version      | 版本号                          |
-| gitCommit    | Git 提交hash                   |
-| gitTreeState | Git 提交状态: 'clean' or 'dirty' |
-| buildDate    | 构建时间                         |
-| goVersion    | go 版本                        |
-| compiler     | 编译器名称                        |
-| platform     | 系统架构，format: os/arch         |
+| Name         | 程序名称                         |
+| Major        | 主要版本号                        |
+| Minor        | 次要版本号                        |
+| Patch        | 修订号                          |
+| Version      | 版本号                          |
+| GitCommit    | Git 提交hash                   |
+| GitTreeState | Git 提交状态: 'clean' or 'dirty' |
+| BuildDate    | 构建时间                         |
+| GoVersion    | go 版本                        |
+| Compiler     | 编译器名称                        |
+| Platform     | 系统架构，format: os/arch         |

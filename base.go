@@ -1,7 +1,5 @@
 package gopkgversion
 
-import "time"
-
 // Base version information.
 //
 // This is the fallback data used when version information from git is not
@@ -27,11 +25,8 @@ var (
 	name = ""
 )
 
-func SetVersion(ver string, t ...time.Time) {
+func SetVersion(ver string) {
 	version = ver
-	if len(t) > 0 {
-		buildDate = t[0].Format(time.RFC3339)
-	}
 }
 
 func SetName(n string) {
