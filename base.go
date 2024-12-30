@@ -22,6 +22,9 @@ var (
 
 	// build date in ISO8601 format, output of $(date -u +'%Y-%m-%dT%H:%M:%SZ')
 	buildDate = ""
+
+	// app name
+	name = ""
 )
 
 func SetVersion(ver string, t ...time.Time) {
@@ -29,4 +32,8 @@ func SetVersion(ver string, t ...time.Time) {
 	if len(t) > 0 {
 		buildDate = t[0].Format(time.RFC3339)
 	}
+}
+
+func SetName(n string) {
+	name = n
 }

@@ -22,14 +22,10 @@ type Info struct {
 	Platform     string `json:"platform,omitempty"`
 }
 
-func Get(name ...string) Info {
-	var n string
-	if len(name) > 0 && name[0] != "" {
-		n = name[0]
-	}
+func Get() Info {
 	ver := ParseVersion(version)
 	return Info{
-		Name:         n,
+		Name:         name,
 		Major:        strconv.Itoa(ver.Major()),
 		Minor:        strconv.Itoa(ver.Minor()),
 		Patch:        strconv.Itoa(ver.Patch()),
